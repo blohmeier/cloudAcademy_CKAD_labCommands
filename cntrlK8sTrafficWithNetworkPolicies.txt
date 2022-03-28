@@ -1,0 +1,39 @@
+ubuntu@ip-10-0-128-5:~$ history
+    1  watch kubectl get nodes
+    2  kubectl get networkpolicy deny-metadata -o yaml
+    3  kubectl explain networkpolicy.spec.egress
+    4  kubectl explain networkpolicy.spec.egress.to
+    5  kubectl explain networkpolicy.spec.egress.to.ipBlock
+    6  kubectl run busybox --image=busybox --rm -it /bin/sh
+    7  kubectl create namespace test
+    8  kubectl run busybox --image=busybox --rm -it -n test /bin/sh
+    9  cat > app-policy.yaml <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app-tiers
+  namespace: test
+spec:
+  podSelector:
+    matchLabels:
+      app-tier: web
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app-tier: cache
+    ports:
+    - port: 80
+EOF
+
+   10  kubectl create -f app-policy.yaml
+   11  kubectl run web-server -n test -l app-tier=web --image=nginx:1.15.1 --port 80
+   12  # Get the web server pod's IP address
+   13  web_ip=$(kubectl get pod -n test -o jsonpath='{.items[0].status.podIP}')
+   14  # Pass in the web server IP addpress as an environment variable
+   15  kubectl run busybox -n test -l app-tier=cache --image=busybox --env="web_ip=$web_ip" --rm -it /bin/sh
+   16  kubectl run busybox -n test --image=busybox --env="web_ip=$web_ip" --rm -it /bin/sh
+   17  history
+ubuntu@ip-10-0-128-5:~$

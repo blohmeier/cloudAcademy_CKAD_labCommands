@@ -1,0 +1,70 @@
+ubuntu@ip-10-0-128-5:~$ history
+    1  watch kubectl get nodes
+    2  # Create namespace
+    3  kubectl create namespace ephemeral
+    4  # Set namespace as the default for the current context
+    5  kubectl config set-context $(kubectl config current-context) --namespace=ephemeral
+    6  cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: coin-toss
+spec:
+  containers:
+  - name: coin-toss
+    image: busybox:1.33.1
+    command: ["/bin/sh", "-c"]
+    args:
+    - >
+      while true;
+      do
+        # Record coint tosses
+        if [[ $(($RANDOM % 2)) -eq 0 ]]; then echo Heads; else echo Tails; fi >> /var/log/tosses.txt;
+        sleep 1;
+      done
+    # Mount the log directory /var/log using a volume
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+  # Declare log directory volume an emptyDir ephemeral volume
+  volumes:
+  - name: varlog
+    emptyDir: {}
+EOF
+
+    7  pod_node=$(kubectl get pod coin-toss -o jsonpath='{.status.hostIP}')
+    8  pod_id=$(kubectl get pod coin-toss -o jsonpath='{.metadata.uid}')
+    9  ssh $pod_node -oStrictHostKeyChecking=no sudo ls /var/lib/kubelet/pods/$pod_id/volumes/kubernetes.io~empty-dir/varlog
+   10  kubectl explain pod.spec.volumes.emptyDir
+   11  kubectl exec coin-toss -- wc -l /var/log/tosses.txt
+   12  kubectl set image pod coin-toss coin-toss=busybox:1.34.0
+   13  kubectl get pods -w
+   14  kubectl exec coin-toss -- wc -l /var/log/tosses.txt
+   15  kubectl delete pod coin-toss
+   16  ssh $pod_node -oStrictHostKeyChecking=no sudo ls /var/lib/kubelet/pods/$pod_id/volumes/kubernetes.io~empty-dir/varlog
+   17  cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cache
+spec:
+  containers:
+  - name: cache
+    image: redis:6.2.5-alpine
+    resources:
+      requests:
+        ephemeral-storage: "1Ki"
+      limits:
+        ephemeral-storage: "1Ki"
+    volumeMounts:
+    - name: ephemeral
+      mountPath: "/data"
+  volumes:
+    - name: ephemeral
+      emptyDir:
+        sizeLimit: 1Ki
+EOF
+
+   18  kubectl describe pod cache
+   19  history
+ubuntu@ip-10-0-128-5:~$ 
