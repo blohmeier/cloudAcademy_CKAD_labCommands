@@ -1,0 +1,586 @@
+First history copy (from AWS created terminal at AWS public IP below):
+http://54.200.135.107:8080/#/cloudacademy
+
+Context "minikube" modified.
+[ec2-user@ip-172-31-26-135 flaskapp]$ history
+    1  sudo yum update
+    2  curl -O https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh
+    3  chmod + install.sh 
+    4  ./install.sh
+    5  ls -la
+    6  chmod +x install.sh 
+    7  ./install.sh
+    8  nvm install 10
+    9  exit
+   10  '
+   11  nvm install 10
+   12  npm install -g yarn
+   13  mkdir theia
+   14  cd theia
+   15  cat > package.json << EOF
+   16  {
+   17    "private": true,
+   18    "dependencies": {
+   19      "typescript": "latest",
+   20      "@theia/typescript": "next",
+   21      "@theia/navigator": "next",
+   22      "@theia/terminal": "next",
+   23      "@theia/outline-view": "next",
+   24      "@theia/preferences": "next",
+   25      "@theia/messages": "next",
+   26      "@theia/git": "next",
+   27      "@theia/file-search": "next",
+   28      "@theia/markers": "next",
+   29      "@theia/preview": "next",
+   30      "@theia/callhierarchy": "next",
+   31      "@theia/merge-conflicts": "next",
+   32      "@theia/search-in-workspace": "next",
+   33      "@theia/json": "next",
+   34      "@theia/textmate-grammars": "next",
+   35      "@theia/mini-browser": "next"
+   36    },
+   37    "devDependencies": {
+   38      "@theia/cli": "next"
+   39    }
+   40  }
+   41  EOF
+   42  sudo yum groupinstall 'Development Tools'
+   43  ls -la
+   44  yarn
+   45  exit
+   46  sudo -s
+   47  cd theia/
+   48  yarn
+   49  mkdir /cloudacademy
+   50  sudo mkdir /cloudacademy
+   51  sudo chown -R ec2-user:ec2-user /cloudacademy
+   52  yarn theia start /cloudacademy --hostname 0.0.0.0 --port 8080
+   53  yarn theia build
+   54  yarn theia start /cloudacademy --hostname 0.0.0.0 --port 8080
+   55  sudo amazon-linux-extras install docker
+   56  sudo service docker start
+   57  sudo usermod -a -G docker ec2-user
+   58  exit
+   59  docker info
+   60  docker ps
+   61  curl -O https://github.com/docker/compose/releases/download/1.25.0/docker-compose-Linux-x86_64
+   62  ls -la
+   63  mv docker-compose-Linux-x86_64 docker-compose
+   64  chmod +x docker-compose
+   65  ls -0la
+   66  ls -pla
+   67  ./docker-compose 
+   68  curl --location -O https://github.com/docker/compose/releases/download/1.25.0/docker-compose-Linux-x86_64
+   69  mv docker-compose-Linux-x86_64 docker-compose
+   70  chmod +x docker-compose
+   71  ./docker-compose 
+   72  mv docker-compose /usr/local/bin/
+   73  sudo mv docker-compose /usr/local/bin/
+   74  docker-compose 
+   75  uname
+   76  uname -a
+   77  cd theia/
+   78  mkdir helm
+   79  cd helm/
+   80  curl -O https://get.helm.sh/helm-v2.16.1-linux-amd64.tar.gz
+   81  ls -la
+   82  tar -xvf helm-v2.16.1-linux-amd64.tar.gz 
+   83  ls -la
+   84  cd linux-amd64/
+   85  ls -la
+   86  ./helm 
+   87  cd ..
+   88  ls -la
+   89  curl -O https://get.helm.sh/helm-v2.16.1-linux-386.tar.gz
+   90  ls
+   91  tar -xvf helm-v2.16.1-linux-386.tar.gz 
+   92  cd linux-386/
+   93  ls
+   94  ./helm 
+   95  uname -a
+   96  cd ..
+   97  ls -la
+   98  rm helm-v2.16.1-linux-386.tar.gz 
+   99  rm -rf linux-386/
+  100  ls -la
+  101  sudo mv linux-amd64/helm /usr/local/bin/
+  102  cd ..
+  103  helm
+  104  yarn theia start /cloudacademy --hostname 0.0.0.0 --port 8080
+  105  helm
+  106  docker-compose 
+  107  docker
+  108  docker ps
+  109  kubectl get nodes
+  110  ps -ef | grep yarn
+  111  cd theia/
+  112  curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+  113  chmod +x minikube
+  114  sudo install minikube /usr/local/bin/
+  115  minikube 
+  116  minikube start --vm-driver=none
+  117  sudo minikube start --vm-driver=none
+  118  ls -la
+  119  sudo cp minikube /usr/bin/
+  120  sudo -s
+  121  sudo minikube start --vm-driver=none
+  122  sudo minikube version
+  123  curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl
+  124  chmod +x kubectl
+  125  sudo mv kubectl /usr/local/bin/kubectl
+  126  kubectl version
+  127  ls -la ~
+  128  echo $HOME
+  129  sudo mv /root/.kube /root/.minikube $HOME
+  130  sudo mv /root/.kube $HOME
+  131  sudo -s
+  132  ls -la ~/.minikube/
+  133  ls -la ~/.minikube/config/
+  134  ls -la ~/
+  135  sudo -s
+  136  cd ~
+  137  ls -la
+  138  sudo mkdir /home/theia/.kube
+  139  sudo cp /root/.minikube/ca.crt /home/ec2-user/.kube/
+  140  sudo cp /root/.minikube/client.crt /home/ec2-user/.kube/
+  141  sudo cp /root/.minikube/client.key /home/ec2-user/.kube/
+  142  sudo chown -R theia:theia /home/ec2-user/.kube/
+  143  ls -la
+  144  rm -rf .kube
+  145  sudo rm -rf .kube
+  146  sudo mkdir /home/ec2-user/.kube
+  147  sudo cp /root/.minikube/ca.crt /home/ec2-user/.kube/
+  148  sudo cp /root/.minikube/client.crt /home/ec2-user/.kube/
+  149  sudo cp /root/.minikube/client.key /home/ec2-user/.kube/
+  150  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  151  ls -la .kube/
+  152  until IP=`sudo minikube ip`; do     sleep 10;     echo trying again...; done
+  153  echo minikube $IP
+  154  cat > /tmp/config << EOF
+  155  apiVersion: v1
+  156  clusters:
+  157  * cluster:
+  158      certificate-authority: ca.crt
+  159      server: https://$IP:8443
+  160      name: minikube
+  161  contexts:
+  162  * context:
+  163      cluster: minikube
+  164      user: minikube
+  165      name: minikube
+  166  current-context: minikube
+  167  kind: Config
+  168  preferences: {}
+  169  users:
+  170  * name: minikube
+  171      user:
+  172      client-certificate: client.crt
+  173      client-key: client.key
+  174  EOF
+  175  cat /tmp/config 
+  176  sed -i 's/*/-/g' /tmp/config
+  177  cat /tmp/config 
+  178  cp /tmp/config /home/ec2-user/.kube/
+  179  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  180  cat .kube/config 
+  181  kubectl get nodes
+  182  vim /home/ec2-user/.kube/config
+  183  kubectl get nodes
+  184  vim /home/ec2-user/.kube/config
+  185  kubectl get nodes
+  186  ps -ef | grep mini
+  187  kubectl get nodes
+  188  sudo minikube status
+  189  minikube update-context
+  190  sudo minikube update-context
+  191  sudo minikube status
+  192  docker ps
+  193  ls -la
+  194  cd .kube/
+  195  ls -la
+  196  cat config 
+  197  kubectl get npods
+  198  kubectl get pods
+  199  minikube status
+  200  sudo minikube status
+  201  sudo -=s
+  202  sudo -s
+  203  which kubectl 
+  204  cd ..
+  205  cd theia/
+  206  ls -la
+  207  sudo cp /usr/local/bin/kubectl /usr/bin/
+  208  sudo -s
+  209  minikube 
+  210  sudo minikube delete
+  211  sudo minikube start --vm-driver=none
+  212  sudo -s
+  213  sudo mv /root/.kube /root/.minikube $HOME
+  214  rm -rf ~/.kube
+  215  rm -rf ~/.minkube
+  216  cd ..
+  217  ls -la
+  218  rm -rf ~/.minikube
+  219  ls -la
+  220  sudo mv /root/.kube /root/.minikube $HOME
+  221  ls -la
+  222  kubectl get nodes
+  223  ls -la
+  224  sudo chown -R $USER $HOME/.kube $HOME/.minikube
+  225  kubectl get nodes
+  226  vim .kube/config 
+  227  kubectl get nodes
+  228  vim .kube/config 
+  229  kubectl get nodes
+  230  vim .kube/config 
+  231  ls 0-la
+  232  ls -la
+  233  ls -la .minikube/
+  234  mv .minikube/ca.crt .kube/
+  235  mv .minikube/ca.key .kube/
+  236  mv .minikube/client.key .kube/
+  237  mv .minikube/client.crt .kube/
+  238  ls -la .kube/
+  239  mv .kube/ca.key .minikube/
+  240  kubectl get nodes
+  241  cd theia/
+  242  yarn theia start /cloudacademy --hostname 0.0.0.0 --port 8080
+  243  sudo -s
+  244  ps -ef | grep mini
+  245  sudo -s
+  246  kubectl get nodes
+  247  ps -ef | grep mini
+  248  sudo cat /root/boot.sh
+  249  ps -ef | grep mini
+  250  sudo -s
+  251  docker ps
+  252  sudo chkconfig docker on
+  253  docker ps
+  254  ps -ef | grep mini
+  255  sudo -s
+  256  docker ps
+  257  ps -ef | grep mini
+  258  sudo -s
+  259  ls -la
+  260  ls .kube/
+  261  rm -rf .kube/
+  262  sudo mkdir /home/ec2-user/.kube
+  263  sudo cp /root/.minikube/ca.crt /home/ec2-user/.kube/
+  264  sudo cp /root/.minikube/client.crt /home/ec2-user/.kube/
+  265  sudo cp /root/.minikube/client.key /home/ec2-user/.kube/
+  266  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  267  ls -la .kube/
+  268  until IP=`sudo minikube ip`; do     sleep 10;     echo trying again...; done
+  269  echo minikube $IP
+  270  cat > /tmp/config << EOF
+  271  apiVersion: v1
+  272  clusters:
+  273  * cluster:
+  274      certificate-authority: ca.crt
+  275      server: https://$IP:8443
+  276      name: minikube
+  277  contexts:
+  278  * context:
+  279    name: minikube
+  280      cluster: minikube
+  281      user: minikube
+  282  current-context: minikube
+  283  kind: Config
+  284  preferences: {}
+  285  users:
+  286  * name: minikube
+  287    user:
+  288      client-certificate: client.crt
+  289      client-key: client.key
+  290  EOF
+  291  sed -i 's/*/-/g' /tmp/config
+  292  cp /tmp/config /home/ec2-user/.kube/
+  293  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  294  kubectl get nodes
+  295  vim /home/ec2-user/.kube/config
+  296  sudo -s
+  297  cat > /tmp/config << EOF
+  298  apiVersion: v1
+  299  clusters:
+  300  * cluster:
+  301      certificate-authority: ca.crt
+  302      server: https://$IP:8443
+  303      name: minikube
+  304  contexts:
+  305  * context:
+  306      cluster: minikube
+  307      user: minikube
+  308    name: minikube    
+  309  current-context: minikube
+  310  kind: Config
+  311  preferences: {}
+  312  users:
+  313  * name: minikube
+  314    user:
+  315      client-certificate: client.crt
+  316      client-key: client.key
+  317  EOF
+  318  sed -i 's/*/-/g' /tmp/config
+  319  cp /tmp/config /home/ec2-user/.kube/
+  320  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  321  kubectl get nodes
+  322  cat > /tmp/config << EOF
+  323  apiVersion: v1
+  324  clusters:
+  325  * cluster:
+  326      certificate-authority: ca.crt
+  327      server: https://$IP:8443
+  328    name: minikube
+  329  contexts:
+  330  * context:
+  331      cluster: minikube
+  332      user: minikube
+  333    name: minikube
+  334  current-context: minikube
+  335  kind: Config
+  336  preferences: {}
+  337  users:
+  338  * name: minikube
+  339    user:
+  340      client-certificate: client.crt
+  341      client-key: client.key
+  342  EOF
+  343  cat /tmp/config
+  344  sed -i 's/*/-/g' /tmp/config
+  345  cp /tmp/config /home/ec2-user/.kube/
+  346  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  347  kubectl get nodes
+  348  sudo systemctl stop minikube
+  349  sudo systemctl status minikube
+  350  docker ps
+  351  sudo minikube stop
+  352  sudo minikube delete
+  353  docker ps
+  354  docker ps -a
+  355  sudo systemctl status minikube
+  356  ls -la /root/.minikube/
+  357  sudo ls -la /root/.minikube/
+  358  sudo mkdir /home/ec2-user/.kube
+  359  sudo cp /root/.minikube/ca.crt /home/ec2-user/.kube/
+  360  sudo cp /root/.minikube/client.crt /home/ec2-user/.kube/
+  361  sudo cp /root/.minikube/client.key /home/ec2-user/.kube/
+  362  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  363  rm -rf /home/ec2-user/.kube
+  364  sudo mkdir /home/ec2-user/.kube
+  365  sudo cp /root/.minikube/ca.crt /home/ec2-user/.kube/
+  366  sudo cp /root/.minikube/client.crt /home/ec2-user/.kube/
+  367  sudo cp /root/.minikube/client.key /home/ec2-user/.kube/
+  368  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  369  until IP=`sudo minikube ip`; do     sleep 10;     echo trying again...; done
+  370  echo minikube $IP
+  371  cat > /tmp/config << EOF
+  372  apiVersion: v1
+  373  clusters:
+  374  * cluster:
+  375      certificate-authority: ca.crt
+  376      server: https://$IP:8443
+  377    name: minikube
+  378  contexts:
+  379  * context:
+  380      cluster: minikube
+  381      user: minikube
+  382    name: minikube
+  383  current-context: minikube
+  384  kind: Config
+  385  preferences: {}
+  386  users:
+  387  * name: minikube
+  388    user:
+  389      client-certificate: client.crt
+  390      client-key: client.key
+  391  EOF
+  392  sed -i 's/*/-/g' /tmp/config
+  393  cp /tmp/config /home/ec2-user/.kube/
+  394  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  395  kubectl get nodes
+  396  sudo systemctl stop minikube
+  397  sudo minikube stop
+  398  sudo minikube delete
+  399  docker ps -a
+  400  docker rm -v $(docker ps -a -q -f status=exited)
+  401  docker ps -a
+  402  docker ps
+  403  ls -la
+  404  until IP=`sudo minikube ip`; do     sleep 10;     echo trying again...; done
+  405  echo minikube $IP
+  406  cat > /tmp/config << EOF
+  407  apiVersion: v1
+  408  clusters:
+  409  * cluster:
+  410      certificate-authority: ca.crt
+  411      server: https://$IP:8443
+  412    name: minikube
+  413  contexts:
+  414  * context:
+  415      cluster: minikube
+  416      user: minikube
+  417    name: minikube
+  418  current-context: minikube
+  419  kind: Config
+  420  preferences: {}
+  421  users:
+  422  * name: minikube
+  423    user:
+  424      client-certificate: client.crt
+  425      client-key: client.key
+  426  EOF
+  427  sed -i 's/*/-/g' /tmp/config
+  428  cat /home/ec2-user/.kube/config 
+  429  kubectl get nodes
+  430  sudo mkdir -p /home/ec2-user/.kube
+  431  ls -la /home/ec2-user/.kube
+  432  kubectl get nodes
+  433  sudo cp /root/.minikube/ca.crt /home/ec2-user/.kube/
+  434  sudo cp /root/.minikube/client.crt /home/ec2-user/.kube/
+  435  sudo cp /root/.minikube/client.key /home/ec2-user/.kube/
+  436  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  437  until IP=`sudo minikube ip`; do     sleep 10;     echo trying again...; done
+  438  echo minikube $IP
+  439  cat > /tmp/config << EOF
+  440  apiVersion: v1
+  441  clusters:
+  442  * cluster:
+  443      certificate-authority: ca.crt
+  444      server: https://$IP:8443
+  445    name: minikube
+  446  contexts:
+  447  * context:
+  448      cluster: minikube
+  449      user: minikube
+  450    name: minikube
+  451  current-context: minikube
+  452  kind: Config
+  453  preferences: {}
+  454  users:
+  455  * name: minikube
+  456    user:
+  457      client-certificate: client.crt
+  458      client-key: client.key
+  459  EOF
+  460  sed -i 's/*/-/g' /tmp/config
+  461  cp /tmp/config /home/ec2-user/.kube/
+  462  sudo chown -R ec2-user:ec2-user /home/ec2-user/.kube/
+  463  kubectl get nodes
+  464  sudo systemctl stop minikube
+  465  sudo minikube stop
+  466  sudo minikube delete
+  467  docker ps
+  468  docker ps -a
+  469  sudo -s
+  470  sudo systemctl start minikube
+  471  sudo systemctl daemon-reload
+  472  sudo systemctl start minikube
+  473  sudo systemctl status minikube
+  474  docker ps
+  475  sudo systemctl stop minikube
+  476  sudo minikube stop
+  477  sudo minikube delete
+  478  docker rm -v $(docker ps -a -q -f status=exited)
+  479  docker ps -a
+  480  docker ps
+  481  kubectl get nodes
+  482  ls -la
+  483  docker-compose config
+  484  docker-compose up
+  485  sudo -s
+  486  kubectl get nodes
+  487  sudo -s
+  488  kubectl get nodes
+  489  sudo systemctl status theia
+  490  ps -ef | grep yarn
+  491  ps -ef f
+  492  sudo kill 2513
+  493  ps -ef f
+  494  sudo kill 3923
+  495  ps -ef f
+  496  sudo kill 4480
+  497  ps -ef f
+  498  sudo systemctl status theia
+  499  sudo systemctl restart theia
+  500  sudo systemctl status theia
+  501  ps -ef f
+  502  sudo systemctl stop minikube
+  503  sudo minikube stop
+  504  sudo minikube delete
+  505  ls -la /cloudacademy/
+  506  sudo rm -rf /cloudacademy/
+  507  docker ps
+  508  docker ps -a
+  509  docker rm -v $(docker ps -a -q -f status=exited)
+  510  docker network list
+  511  docker network
+  512  docker network rm cloudacademy_my-network
+  513  docker ps -a
+  514  docker ps
+  515  sudo -s
+  516  ls -la
+  517  kubectl get nodes
+  518  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  519  ls -la
+  520  ./kubectl version
+  521  sudo ./kubectl version
+  522  sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  523  /usr/local/bin/kubectl version
+  524  kubectl version
+  525  kubectl get nodes
+  526  curl -LO https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz
+  527  tar -xvf helm-v3.7.0-linux-amd64.tar.gz 
+  528  sudo install -o root -g root -m 0755 linux-amd64/helm /usr/local/bin/helm
+  529  which helm
+  530  helm
+  531  helm version
+  532  chmod go-r ~/.kube/config
+  533  helm version
+  534  kubectl version
+  535  kubectl get nodes
+  536  ls -la /usr/local/bin
+  537  minikube stop
+  538  minikube delete
+  539  sudo -s
+  540  kubectl get nodes
+  541  ls -la
+  542  cd .kube/
+  543  ls -la
+  544  vim config 
+  545  kubectl get nodes
+  546  vim config 
+  547  sudo -s
+  548  ls -la
+  549  rm key.pem cert.pem 
+  550  ls -la
+  551  vim config 
+  552  kubectl get nodes
+  553  kubectl version
+  554  cd ..
+  555  ls -la
+  556  rm -rf helm-v3.7.0-linux-amd64.tar.gz minikube-linux-amd64 kubectl linux-amd64
+  557  ls -la
+  558  cat install.sh 
+  559  ls -la
+  560  rm install.sh 
+  561  ls -la
+  562  tree .kube/
+  563  ls -la
+  564  rm -rf .kube/ 
+  565  tree .minikube/
+  566  rm -rf .minikube/
+  567  ls -la
+  568  sudo -s
+  569  ls -la
+  570  sudo -s
+  571  ls -la
+  572  sudo -s
+  573  ls -la
+  574  exit
+  575  sudo -s
+  576  ls -la
+  577  docker build -t cloudacademydevops/flaskapp .
+  578  docker images 
+  579  kubectl create ns cloudacademy
+  580  kubectl config set-context --current --namespace=cloudacademy
+  581  history
