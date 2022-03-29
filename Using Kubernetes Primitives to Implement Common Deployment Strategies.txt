@@ -1,0 +1,158 @@
+ubuntu@ip-10-0-128-5:~$ history
+    1  watch kubectl get nodes
+    2  # Create namespace
+    3  kubectl create namespace strategies
+    4  # Set namespace as the default for the current context
+    5  kubectl config set-context $(kubectl config current-context) --namespace=strategies
+    6  cat << EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    version: old
+  name: app
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: web
+      version: old
+  strategy:
+    type: RollingUpdate # Default value is RollingUpdate, Recreate also supported
+  template:
+    metadata:
+      labels:
+        app: web
+        version: old
+    spec:
+      containers:
+      - image: nginx:1.21.3-alpine
+        name: nginx
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          failureThreshold: 3 
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          periodSeconds: 5
+          successThreshold: 2
+          timeoutSeconds: 10
+EOF
+
+    7  cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+  name: app
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: web
+  type: LoadBalancer
+EOF
+
+    8  kubectl get service -w
+    9  cat << EOF | kubectl patch service app --patch-file /dev/stdin
+spec:
+  selector:
+    app: web
+    version: old
+EOF
+
+   10  cat << EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    version: new
+  name: app-new
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: web
+      version: new
+  template:
+    metadata:
+      labels:
+        app: web
+        version: new
+    spec:
+      containers:
+      - image: httpd:2.4.49-alpine3.14
+        name: httpd
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          failureThreshold: 3 
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          periodSeconds: 5
+          successThreshold: 2
+          timeoutSeconds: 10
+EOF
+
+   11  kubectl get deployments -w
+   12  cat << EOF | kubectl patch service app --patch-file /dev/stdin
+spec:
+  selector:
+    app: web
+    version: new
+EOF
+
+   13  kubectl delete deployments app
+   14  kubectl patch service app --type=json --patch='[{"op": "remove", "path": "/spec/selector/version"}]'
+   15  cat << EOF | kubectl apply -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    version: canary
+  name: app-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: web
+        version: canary
+    spec:
+      containers:
+      - image: caddy:2.4.5-alpine
+        name: caddy
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          failureThreshold: 3 
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          periodSeconds: 5
+          successThreshold: 2
+          timeoutSeconds: 10
+EOF
+
+   16  kubectl get deployments -w
+   17  service_address=$(kubectl get service app -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+   18  while true; do     curl --silent $service_address | grep "works";     sleep 1; done
+   19  kubectl delete deployment app-canary
+   20  kubectl set image deployment app-new *=caddy:2.4.5-alpine
+   21  history
+ubuntu@ip-10-0-128-5:~$ 
