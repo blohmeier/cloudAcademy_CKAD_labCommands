@@ -1,0 +1,19 @@
+Welcome back. In this demonstration, I'm going to walk you through the process of hosting your own charts within your own chart repository. For this demonstration, I'll reuse the demo chart created in the previous demonstration. For chart repository web serving, I'm actually going to use GitHub's ability to act as a static serving web server. GitHub provides this capability through its Pages feature.
+
+Okay, let's begin. So, the first thing we need to do is configure a Helm chart repository index.yaml file, a requirement for a Helm repository. Doing so is easy, simply run the command helm repo index, and here we'll go at the current directory. Now, if I perform a directory listing in the current directory, you'll see the presence of the new index.yaml file, which was just created. Catting out its contents, we can see that it has found our custom cloudacademy-webapp chart, and has captured and stored related metadata.
+
+When you run the helm repo index command with a directory path, it will actually perform a recursive directory scan for all charts. Okay, now that we have our index file, let's jump over into GitHub and create a new GitHub repository, which we'll then enable the pages feature on, and then upload our Helm chart repo assets, those being the index.yaml, and the cloudacademy-webapp chart file.
+
+Within GitHub, I'll create a new repo and give it the name helm-repo, and make it public. I'll copy and paste the commands here into the current demo-helm directory back within my terminal, configuring this directory for source control within GitHub. Next, I'll run the following command to create a new branch named gh-pages. I'll then stage both the index.yaml and chart files like so.
+
+Next, I'll commit and push the gh-pages branch up into GitHub. Jumping back into the GitHub helm-repo, I'll refresh the home page. I'll now check that the new gh-pages branch was successfully pushed up into GitHub, and this is confirmed here. Next, I need to set up GitHub pages for the current repo. To do so, I'll click on Settings, and then scroll down to the GitHub Pages section, located here.
+
+Within this section, you can specify the branch that is to be used and served as static content by GitHub. GitHub has automatically selected the gh-pages branch for us, so we are good to go. Copy this URL located here. This is the base URL which when called will return content directly, as if it were served by a static web HTTP server. To confirm this, I'll take a copy and jump back into my terminal, and use the curl command to test access to the hosted index.yaml file. And excellent. We indeed get an HTTP 200 response code together with the index.yaml content. From here it's just a simple case of updating our local helm repo cache by adding the GitHub pages URL.
+
+To do so, I'll run the command helm repo add cloudacademy-gh-repo, and then providing it with the GitHub pages base URL. Okay, that looks great.
+
+Now I'll run the command helm repo update to update my local helm repo cache. I can now search within the local helm repo by running the command helm search repo cloudacademy. Here we can see a single result which is the custom chart we earlier built, and now host within our GitHub repo, and for which we hosted within our CloudAcademy GitHub-based chart repository. Let's now install it.
+
+To do so, I'll run the command helm install ca-demo2. Okay, that looks good. We can now call up the clusters services view, and then use the new service's assigned IP address to again send a test HTTP GET request. Let's do so now. And as expected we get the correct response. Okay, that concludes this demonstration in which I showed you how to create and host your own Helm repository.
+
+In this demonstration, we leveraged GitHub Pages to provide us with a static web server. You can, however, use any other web server capable of serving HTTP static content.
