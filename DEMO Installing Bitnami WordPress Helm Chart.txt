@@ -1,0 +1,27 @@
+Welcome back. In this demonstration, I'm going to quickly show you how to find and install a WordPress Helm chart, using the Helm 3 client that we previously installed. For this demonstration, I'm going to use Minikube, which has already been installed locally, to create and run a local Kubernetes cluster on my MacOS laptop.
+
+Okay, let's proceed! For starters, I'm going to use the minikube command to examine the status of an existing Kubernetes cluster that I've previously provisioned on this workstation. I'll run the minikube status command, and here we can see that it's in a stopped state.
+
+Let's start up this cluster by running the command minikube start. Here we can see that minikube is now awakening the cluster for us. This is a fairly quick process, and it's just completed. So our Kubernetes cluster is now active.
+
+Next, I'll use the helm list command to list out any Helm releases I may have previously deployed into this cluster. In this case, you can see that it has returned empty, indicating that the cluster doesn't have any existing Helm releases within it.
+
+Let's now use the helm search command. Double-tapping the tab key shows that we have two search sub commands, hub and repo. I'll use the hub sub command, since I want to search the online Helm hub for a WordPress chart. Therefore, the full command that I'll execute is helm search hub wordpress. Here we can see the following search results. We can expand the truncated URLs by running the command Helm search hub WordPress - o, for output, and yaml, for the format.
+
+I'm now going to proceed by installing the WordPress chart provided from the Bitnami repo. To do so, I'll first need to discover the Bitnami repo URL. I'll copy this URL, and then navigate to it within my browser. Here, we can see detailed instructions as to how the Bitnami Helm repo can be added locally, and then how to install the actual Bitnami Helm chart.
+
+Let's copy this Helm command and execute it back within our terminal. Okay, that has successfully added the Bitnami repo to my local Helm repo list. If I perform a Helm repo list, I can see all of the configured repos I currently have locally. Let's now run the command Helm repo update to update my local repo cache.
+
+Okay, we are now all up-to-date. This time, if I run Helm search repo WordPress, I'm searching for a WordPress chart within my local Helm repo cache. Here I can see one result, that being the Bitnami provided WordPress chart. Let's proceed by now installing the Bitnami WordPress chart. To do so, I'll simply run the command helm install wordpress.
+
+I'll set the WordPress username to admin, and likewise the WordPress password to be password. I'll set the MariaDB database password to secretpassword. And then finally, I'll provide the chart name. Here we can see that this has completed successfully, and fairly quickly too. We can see some summary information outputted at the top, indicating the Helm chart release name, WordPress, the namespace that it was deployed into, default, the release revision number, one. And, additionally, we have detailed instructions as to how to navigate to the WordPress application.
+
+Before we attempt to access WordPress, let's take a quick look at both Helm's view of the world and the cluster's updated state. Running the command helm list allows us to view all of the Helm releases we have currently performed. As you can see, we've just the one, which represents the WordPress release we just performed.
+
+Next, let's use the kubectl get all command to display all of the cluster resources that now exist in the current namespace. Here we can see each of the WordPress chart installed cluster resources and their current states, and everything looks good. I'll now use the helm status command with the WordPress release name to regenerate the instructions, which tell us how to access the WordPress frontend.
+
+These instructions work in proper clusters, but since I'm running this cluster in minikube, I can use the minikube provided command minikube service wordpress instead to output the WordPress frontend URLs. Here, we can see minikube maps two URLs, one against WordPress's HTTP port 80, and another against WordPress's HTTPS port 443. I'll copy the port 80 mapped URL. Finally, using my browser, I'll browse to this URL and pull up the WordPress frontend like so.
+
+Perfect, we are served up with the public frontend view of WordPress. Let's now try logging into the backend WordPress administration area by navigating to the path wp-admin and using the credentials that we set during the WordPress chart install earlier, those being admin and password. Excellent. We're in. Once we have finished with a particular Helm release, we can remove it.
+
+To do so, I'll simply run the helm uninstall wordpress command. We can also check the cluster by executing the command kubectl get all to display resources within the current namespace, of which we see none as expected. Okay, that concludes this demonstration in which I showed you how to search for, find, set up a repo, and then install Bitnami's publicly available WordPress chart.
