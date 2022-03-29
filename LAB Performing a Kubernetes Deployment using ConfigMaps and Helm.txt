@@ -634,3 +634,11 @@ Final History update for 'Apply Deployment' page:
   
   
 Start of 'Create Helm Project' page:
+ 608  history
+  609  cd ..
+  610  helm create test-app
+  611  tree test-app/
+  612  helm template test-app/
+  613  history
+
+Start of 'Update Deployment to Use Helm Templates' page:
