@@ -584,3 +584,19 @@ Context "minikube" modified.
   579  kubectl create ns cloudacademy
   580  kubectl config set-context --current --namespace=cloudacademy
   581  history
+  
+  
+  581  history
+[ec2-user@ip-172-31-26-135 flaskapp]$ cd ../k8s && ls -la
+total 8
+drwxr-xr-x 2 ec2-user ec2-user  57 Sep 28 21:27 .
+drwxr-xr-x 5 ec2-user ec2-user  44 Sep 28 21:27 ..
+-rw-r--r-- 1 ec2-user ec2-user 686 Sep 28 21:27 deployment.yaml
+-rw-r--r-- 1 ec2-user ec2-user 214 Sep 28 21:27 nginx.configmap.yaml
+[ec2-user@ip-172-31-26-135 k8s]$ kubectl apply -f nginx.configmap.yaml
+configmap/nginx-conf created
+[ec2-user@ip-172-31-26-135 k8s]$ kubectl get configmaps 
+NAME               DATA   AGE
+kube-root-ca.crt   1      6m28s
+nginx-conf         1      12s
+[ec2-user@ip-172-31-26-135 k8s]$ 
