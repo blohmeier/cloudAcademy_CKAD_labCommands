@@ -600,3 +600,37 @@ NAME               DATA   AGE
 kube-root-ca.crt   1      6m28s
 nginx-conf         1      12s
 [ec2-user@ip-172-31-26-135 k8s]$ 
+
+Final History update for 'Apply Deployment' page:
+  580  kubectl config set-context --current --namespace=cloudacademy
+  581  history
+  582  cd ../k8s && ls -la
+  583  kubectl apply -f nginx.configmap.yaml
+  584  kubectl get configmaps 
+  585  kubectl apply -f deployment.yaml
+  586  kubectl get deploy 
+  587  kubectl get pods
+  588  POD_NAME=`kubectl get pods -o jsonpath='{.items[0].metadata.name}'`
+  589  echo $POD_NAME
+  590  kubectl describe pod $POD_NAME
+  591  docker images | grep cloudacademydevops
+  592  sed -i 's/cloudacademydevops\/flask.*/cloudacademydevops\/flaskapp/g' deployment.yaml
+  593  kubectl apply -f deployment.yaml
+  594  kubectl get deploy 
+  595  kubectl expose deployment frontend --port=80 --target-port=80
+  596  kubectl get svc frontend 
+  597  FRONTEND_SERVICE_IP=`kubectl get service/frontend -o jsonpath='{.spec.clusterIP}'`
+  598  echo $FRONTEND_SERVICE_IP
+  599  curl -i http://$FRONTEND_SERVICE_IP
+  600  kubectl apply -f deployment.yaml
+  601  curl -i http://$FRONTEND_SERVICE_IP
+  602  kubectl get pods 
+  603  FRONTEND_POD_NAME=`kubectl get pods --no-headers -o custom-columns=":metadata.name"`
+  604  echo $FRONTEND_POD_NAME
+  605  kubectl exec -it $FRONTEND_POD_NAME -c nginx -- ls -la /var/log/nginx/
+  606  kubectl logs $FRONTEND_POD_NAME nginx
+  607  kubectl logs $FRONTEND_POD_NAME flask
+  608  history
+  
+  
+Start of 'Create Helm Project' page:
