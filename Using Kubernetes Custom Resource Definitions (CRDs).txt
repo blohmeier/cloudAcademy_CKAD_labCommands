@@ -1,0 +1,15 @@
+ubuntu@ip-10-0-128-5:~$ history
+    1  watch kubectl get nodes
+    2  kubectl get crds
+    3  kubectl get crds applications.argoproj.io -o yaml | more
+    4  kubectl get applications --all-namespaces
+    5  kubectl describe application guestbook
+    6  nohup kubectl port-forward service/my-argo-cd-argocd-server -n default --address 0.0.0.0 8001:443 &>/dev/null &
+    7  # Get the bastion's public IP
+    8  bastion_ip=$(curl --silent http://169.254.169.254/latest/meta-data/public-ipv4)
+    9  # Output the Argo web address
+   10  echo "http://$bastion_ip:8001"
+   11  kubectl -n default get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+   12  kubectl edit applications guestbook
+   13  history
+ubuntu@ip-10-0-128-5:~$
