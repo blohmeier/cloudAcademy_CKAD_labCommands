@@ -135,3 +135,336 @@ You can see some useful information, such as the number of containers, and the v
 
 Summary 
 In this Lab Step, you added the official Docker CE repositories to the yum package manager and installed Docker CE. You also learned your first Docker command to print system-wide information relevant to Docker.
+
+Using Docker without Root Permission on Linux
+
+Introduction
+In the last Lab Step, you used root permissions to run a Docker command. In this Lab Step you will learn how to use Docker commands without elevating to root permissions. This may not always be what you want and should only be performed for trusted users. This is because the actions are equivalent to granting root permissions to a user. It will be convenient in the following Lab Steps to not have to enter sudo for every command.
+
+ 
+
+Instructions
+1. Try entering the same command without using root permission:
+
+Copy code
+1
+docker info
+You will receive a permission denied error message similar to:
+
+alt
+
+By default, the Docker daemon will reject requests from users that aren't part of the docker group. If you encounter this message in your travels, you can either use root permission or add your user to the docker group.
+
+ 
+
+2. Verify the docker group exists by searching for it in the groups file:
+
+Copy code
+1
+grep docker /etc/group
+If you don't see a line beginning with "docker:", you will need to add the group yourself by entering:
+
+Copy code
+1
+sudo groupadd docker
+ 
+
+3. Add your user to the docker group:
+
+Copy code
+1
+sudo gpasswd -a $USER docker
+The groups of the currently logged in user is cached, you can verify this by entering groups.
+
+ 
+
+4. You can login again to have your groups updated by entering:
+
+Copy code
+1
+newgrp docker
+Now you will have docker in your list of groups if you enter groups.
+
+Note: It is convenient to not have to terminate your current ssh session by using newgrp, but terminating the ssh session and logging in again will work just as well.
+
+ 
+
+5. Verify that your user can successfully issue Docker commands by entering:
+
+Copy code
+1
+docker info
+Note: if you don't see the system-wide Docker information, you may need to restart the Docker daemon by entering sudo systemctl restart docker.
+
+ 
+
+Summary 
+In this Lab Step, you learned about the docker group which has permisison to issue Docker commands. You also learned how to add your user to the group.
+
+Getting Docker Help from the Command Line
+
+Introduction
+In this Lab Step, you will learn about how Docker commands are organized and how to get help for commands on the command line. If you are familiar with using the Linux command line or the git version control system, you will find many of the commands familiar in name and action. Even if you aren't familiar, the commands are organized in an intuitive way that makes learning to use Docker commands as painless as practicable.
+
+The commands are organized into common commands and a more exhaustive list grouped around the management of a specific component of Docker. You use each with a different syntax. For a common command, the usage is:
+
+Copy code
+1
+docker command-name [options] 
+and the usage for a management group command is:
+
+Copy code
+1
+docker management-group command-name [options]
+Most of the common commands can be accessed in the short form or by specifying the management grouping they also fall under. Some commands are only available by specifying the management group. You will get the hang of this and review a couple of the main concepts in the following instructions.
+
+ 
+
+Instructions
+1. To see a list of the commands in Docker, simply enter:
+
+Copy code
+1
+docker --help
+The management commands and common commands are highlighted in the image below:
+
+alt
+
+ 
+
+2. Enter the following management command:
+
+Copy code
+1
+docker system info
+The output should look familiar. That is because info is a common command that you used in the last Lab Step (docker info) to see the same system-wide information.
+
+ 
+
+3. To see all of the commands grouped under system, enter:
+
+Copy code
+1
+docker system --help
+You will be presented with output similar to: 
+
+alt
+
+Notice the info command previously entered.  events is a common command, but df and prune are only available through the system management command.  You can use df to see the disk usage for Docker and prune to clean up unused data. 
+
+Using the --help you can explore everything there is to know about Docker commands. To prepare for the upcoming Lab Steps, you will now focus in on a few important components.
+
+ 
+
+4. To view the commands grouped with images, enter:
+
+Copy code
+1
+docker image --help
+alt
+
+Images are read-only snapshots that containers can be created from. Images are built up in layers, one image built on top of another. Because each layer is read-only, they can be identified with cryptographic hash values computed from the bytes of the data. Layers can be shared between images as another benefit of being read-only. You can, and will later, build your own images. The build command accomplishes that. When you build your own image, you will select a base image to build on top of with your custom application. A pull can be used to pull or download an image to your server from an image registry, while push can upload an image to a registry. Read through the other command descriptions so you are aware of what else is available.
+
+ 
+
+5. To view the commands grouped with containers, enter:
+
+Copy code
+1
+docker container --help
+alt
+
+A container is another core concept in Docker. Containers run applications or services, almost always just one per container. Containers run on top of an image. In terms of storage, a container is like another layer on top of the image, but the layer is writable instead of read-only. You can have many containers using the same image. Each will use the same read-only image and have its own writable layer on top. Containers can be used to create images using the commit command, essentially converting the writable layer to a read-only layer in an image. 
+
+The relationship between images and containers aside, run is used to run a command on top of an image. A container can be stopped and started again. ls is used to list containers. It is aliased to ps and list as well. Read through the other commands in the list to see what else is available for working with containers. 
+
+ 
+
+Summary 
+In this Lab Step, you observed the command layout used by Docker. You also reviewed the core Docker concepts of images and containers as well as frequently used commands for each. You will see these commands in action in the following Lab Steps.
+
+Running Your First Docker Container
+
+Introduction
+As you learned in the previous Lab Step, containers run a command on top of an image. There are many available images to choose from. Images are collected in repositories. A repository can have many versions of an image. Tags are used to manage versions. You will use images from repositories inside the default Docker Registry, Docker Hub. Docker Hub hosts official images as well as community-contributed images. Docker Hub offers free and paid accounts. You get an unlimited amount of public repositories and one free private repository with the free account.
+
+In this Lab Step, you will run your first container. You will learn how to search Docker Hub, pull images, and work with containers running on top of the images. You will get practice with many common commands when working with Docker. 
+
+ 
+
+Instructions
+1. Enter the following to see how easy it is to get a container running:
+
+Copy code
+1
+docker run hello-world
+It can be just that easy to run a container! You will see output similar to:
+
+alt
+
+There are two sections to the output: output from Docker as it prepares to run the container and the output from the command running in the container.
+
+ 
+
+Take a look at the Docker output first:
+
+In the first line, Docker is telling you that it couldn't find the image you specified, hello-world, on the Docker Daemon's local host. The latest portion after the colon (:) is a tag. The tag identifies which version of the image to use. By default, it looks for the latest version.
+In the next line, it notifies you that it automatically pulled the image. You could manually perform that task using the command docker pull hello-world. The library/hello-world is the repository it's pulling from inside the Docker Hub registry. library is the account name for official Docker images. In general, images will come from repositories identified using the pattern account/repository.
+The last three lines confirm the pull completed and the image has been downloaded.
+ 
+
+The container output is the output that gets written by the command that runs in the container. Read the output to learn more about how it was produced. You ask, but what was the command? You only specified the image name, hello-world. The image provides a default command in this case which prints the output you see.
+
+ 
+
+2. Re-run the same command:
+
+Copy code
+1
+docker run hello-world
+Notice this time the Docker output is not included. That is because the specific version of the image was found locally and there is no need to pull the image again.
+
+ 
+
+3. Try running a more complex container with some options specified:
+
+Copy code
+1
+docker run --name web-server -d -p 8080:80 nginx:1.12
+This runs the nginx web server in a container using the official nginx image. You will see output similar to:
+
+alt
+
+This time you specified the tag 1.12 indicating you want version 1.12 of nginx instead of the default latest version. There are three Pull complete messages this time, indicating the image has three layers. The last line is the id of the running container. The meanings of the command options are:
+
+--name container_name: Label the container container_name. In the command above, the container is labeled web-server. This is much more manageable than the id, 31f2b6715... in the output above.
+-d: Detach the container by running it in the background and print its container id. Without this, the shell would be attached to the running container command and you wouldn't have the shell returned to you to enter more commands.
+-p host_port:container_port: Publish the container's port number container_port to the host's port number host_port. This connects the host's port 8080 to the container port 80 (http) in the nginx command.
+You again used the default command in the image, which runs the web server in this case.
+
+ 
+
+4. Verify the web server is running and accessible on the host port of 8080:
+
+Copy code
+1
+curl localhost:8080
+This command sends an HTTP GET request (a standard web browser request) to localhost port 8080. You will be returned an HTML document, which is the default nginx web page, verifying the nginx server is running in the container:
+
+alt
+
+ 
+
+5. To list all running containers, enter:
+
+Copy code
+1
+docker ps
+alt
+
+You will see a table with one row below the table column headings, indicating one running process. The (truncated) container id is the same as the last line of the docker run output. One new thing is that you can see the command that is running in the container in the third column. The friendly name you specified is in the last column.
+
+ 
+
+6. Enter the following to see a list of all running and stopped containers:
+
+Copy code
+1
+docker ps -a
+alt
+
+This time you can see the two hello-world containers from the start of the Lab Step. They simply wrote a message and then stopped when the command finished, whereas the nginx server is always listening for requests until you stop it. Notice that Docker automatically assigned random friendly names for the hello-world containers, musing_volard, and jovial_snyder in the image above. These names are useful if you need to reference a container that you didn't assign a name to by yourself.
+
+ 
+
+7. To stop the nginx server, enter:
+
+Copy code
+1
+docker stop web-server
+ 
+
+8. Verify the server is no longer running by running:
+
+Copy code
+1
+docker ps
+This will not return any rows in the table. You can also verify that the default nginx web page is no longer being served by running curl localhost:8080 again.
+
+ 
+
+9. To start running the command in the web-server container again, enter:
+
+Copy code
+1
+docker start web-server
+This is different from re-running the original docker run command, which would make a second container running the same command instead of using the stopped container.
+
+ 
+
+10. To see the container's output messages, enter:
+
+Copy code
+1
+docker logs web-server
+alt
+
+Docker logs messages written to standard output and standard error. In the case of nginx, it writes a line for each request that it receives.
+
+ 
+
+11. You can run other commands in a running container. For example, to get a bash shell in the container enter:
+
+Copy code
+1
+docker exec -it web-server /bin/bash
+Which will cause your shell prompt to change to something similar to:
+
+alt
+
+This indicates you are at a shell prompt in the container using the root container user. The -it options tell Docker to handle your keyboard events in the container. Enter some commands to inspect the container environment, such as ls and cat /etc/nginx/nginx.conf. When finished, enter exit to return to the VM ssh shell. Your shell prompt should change to confirm you are no longer in the container bash shell.
+
+You were able to connect to a bash shell because the nginx image has a Debian Linux layer which includes bash. Not all images will include bash, but exec can be used to run any supported command in the container.
+
+ 
+
+12. To list the files in the container's /etc/nginx directory, enter:
+
+Copy code
+1
+docker exec web-server ls /etc/nginx
+This runs the ls command and returns to the ssh shell prompt without using a container shell to execute the command. What commands are supported depends on the layers in the container's image. Up until now you have used two images but don't know how to find more.
+
+ 
+
+13. Stop the nginx container:
+
+Copy code
+1
+docker stop web-server
+ 
+
+14. Search for an image that you don't know the exact name of, say an image for Microsoft .NET Core, by entering:
+
+Copy code
+1
+docker search "Microsoft .NET Core"
+This searches Docker Hub for images related to the string provided. In this case, the top results related to .NET Core are returned:
+
+alt
+
+This can be useful for recalling the name of an image but not very useful for images that have multiple configuration options. For that you should use the web version of Docker Hub.
+
+ 
+
+15. Navigate to the following link. You will be viewing the web page of the .NET repository: 
+
+alt
+
+You will find all the supported tags along with helpful documentation for using the images. You will usually find useful documentation and examples for images on Docker Hub. You will notice a Dockerfile beside each group of tags on the dotnet page. A Dockerfile is a set of instructions for creating an image and it is what you will dive into in the next Lab Step.
+
+ 
+
+Summary 
+In this Lab Step, you explored the commands related to working with containers. You also ran a few containers. You learned the steps Docker takes to run a container and how to find Docker Hub images to create containers from.
+
