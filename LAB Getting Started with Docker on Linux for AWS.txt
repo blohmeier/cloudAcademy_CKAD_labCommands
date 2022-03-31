@@ -638,6 +638,70 @@ There are two requests because the browser automatically requests a favicon in a
 Summary 
 In this Lab Step, you created your own image using a Dockerfile. You also ran a container using the image that was built. 
 
+67.212.194.246 - - [31/Mar/2022 21:02:19] "GET / HTTP/1.1" 200 -
+67.212.194.246 - - [31/Mar/2022 21:02:20] "GET /favicon.ico HTTP/1.1" 404 -
+^C[ec2-user@ip-10-0-0-219 flask-content-advisor]$ history
+    1  docker info
+    2  history
+    3  docker command-name [options] 
+    4  docker management-group command-name [options]
+    5  docker --help
+    6  docker system info
+    7  docker system --help
+    8  docker image --help
+    9  docker container --help
+   10  history
+   11  docker run hello-world
+   12  docker run --name web-server -d -p 8080:80 nginx:1.12
+   13  curl localhost:8080
+   14  docker ps
+   15  docker ps -a
+   16  docker stop web-server
+   17  docker ps
+   18  curl localhost:8080
+   19  docker start web-server
+   20  docker logs web-server
+   21  docker exec -it web-server /bin/bash
+   22  docker exec web-server ls /etc/nginx
+   23  docker stop web-server
+   24  docker search "Microsoft .NET Core"
+   25  history
+   26  [ec2-user@ip-10-0-0-219 ~]$ history
+   27      1  docker info
+   28      2  history
+   29      3  docker command-name [options] 
+   30      4  docker management-group command-name [options]
+   31      5  docker --help
+   32      6  docker system info
+   33      7  docker system --help
+   34      8  docker image --help
+   35      9  docker container --help
+   36     10  history
+   37     11  docker run hello-world
+   38     12  docker run --name web-server -d -p 8080:80 nginx:1.12
+   39     13  curl localhost:8080
+   40     14  docker ps
+   41     15  docker ps -a
+   42     16  docker stop web-server
+   43     17  docker ps
+   44     18  curl localhost:8080
+   45     19  docker start web-server
+   46     20  docker logs web-server
+   47     21  docker exec -it web-server /bin/bash
+   48     22  docker exec web-server ls /etc/nginx
+   49     23  docker stop web-server
+   50     24  docker search "Microsoft .NET Core"
+   51     25  history
+   52  [ec2-user@ip-10-0-0-219 ~]$ 
+   53  sudo yum -y install git
+   54  git clone https://github.com/cloudacademy/flask-content-advisor.git
+   55  cd flask-content-advisor
+   56  nano Dockerfile
+   57  docker build -t flask-content-advisor:latest .
+   58  curl ipecho.net/plain; echo
+   59  docker run --name advisor -p 80:5000 flask-content-advisor
+   60  history
+[ec2-user@ip-10-0-0-219 flask-content-advisor]$
 
 
 
