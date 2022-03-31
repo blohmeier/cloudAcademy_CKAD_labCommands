@@ -215,3 +215,21 @@ This is the token that the ServiceAccount uses to authenticate its requests.
 
 Summary
 In this lab step, you learned how authentication works in Kubernetes, and in particular when using kubectl for users and ServiceAccounts. User requests must pass the same authentication and other access control layers regardless of if they are sent from kubectl, using client libraries or REST API requests (in fact kubectl and client libraries are also sending REST API requests but abstracting the details away from you). You understood the role of kubeconfig files, contexts, and config commands to ensure that kubectl is properly configured to communicate with the target cluster. You also saw how ServiceAccounts use tokens for authentication.
+
+ubuntu@ip-10-0-128-5:~$ history
+    1  watch kubectl get nodes
+    2  kubectl get pods
+    3  kubectl get pods --v=6
+    4  cat /home/ubuntu/.kube/config
+    5  kubectl config --help
+    6  kubectl config get-contexts
+    7  grep "client-cert" ~/.kube/config |   sed 's/\(.*client-certificate-data: \)\(.*\)/\2/' |   base64 --decode   > cert.pem
+    8  openssl x509 -in cert.pem -text -noout
+    9  cp .kube/config .kube/config.orig
+   10  sed -i '15,$d' .kube/config
+   11  kubectl get pods --v=6
+   12  cp .kube/config.orig .kube/config
+   13  kubectl get serviceaccounts default -o yaml
+   14  kubectl get secrets -o yaml
+   15  history
+ubuntu@ip-10-0-128-5:~$
