@@ -1,0 +1,56 @@
+Introduction
+You will use a multi-node Kubernetes cluster to explore authentication, authorization and admission control in this lab. This lab provides you with a Kubernetes cluster initialized with kubeadm and running on Ubuntu. The cluster is similar to the clusters used in official CNCF Kubernetes certification exams. It has a bastion node for connecting to the Kubernetes cluster nodes that includes a single control-plane node. The infrastructure is deployed on AWS. You can log in to AWS using the lab credentials and Open Environment link when needed.
+
+The following instructions connect to the cluster using a web browser terminal. You can also connect using your preferred SSH client rather than the browser terminal by using the PPK (Windows) or PEM (Mac/Linux) key files in the Credentials section of this lab to connect to the bastion host's IP address which appears below the credentials once it is available.
+
+Note: The Open Environment link to the left takes you to AWS, while the Open Development Env. link takes you to the web terminal.
+
+ 
+
+Instructions
+1. Click Open Development Env. once you see 100% Setup completed:
+
+alt
+
+This connects you to the browser terminal.
+
+ 
+
+2. At the login prompt enter the following credentials:
+
+login: Enter ca
+Password: Press enter (no password)
+You are then presented with the shell prompt:
+
+alt
+
+ 
+
+3. Once you see Open Environment 100% Setup completed (It usually takes 1 minute from the time you start the lab):
+
+alt
+
+Copy the Cluster SSH command that appears at the bottom of the lab Credentials panel:
+
+alt
+
+ 
+
+4. In the browser terminal, enter the Cluster SSH command at the prompt:
+
+You are now connected to the bastion node in the cluster:
+
+alt
+
+ 
+
+5. To ensure the cluster has one available worker node (ROLES set to <none>) before proceeding to use the cluster, enter the following command to watch the cluster come up and press ctrl+c to stop watching: 
+
+Copy code
+1
+watch kubectl get nodes
+alt
+
+It usually takes 2 minutes from the time you start the lab to see a worker node join the cluster. You can proceed to the next step before seeing the worker node, but one worker node should be available before you start working with the cluster.
+
+Note: You may see The connection to the server 10.0.0.100:6443 was refused - did you specify the right host or port? while the control plane's API server prepares to accept requests. It is not a problem and the control-plane node will appear before long.
