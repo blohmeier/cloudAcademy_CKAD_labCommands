@@ -1,0 +1,99 @@
+Logging in to the Amazon Web Services Console
+Introduction
+This lab experience involves Amazon Web Services (AWS), and you will use the AWS Management Console to complete all the lab steps.
+
+alt
+
+The AWS Management Console is a web control panel for managing all your AWS resources, from EC2 instances to SNS topics. The console enables cloud management for all aspects of the AWS account, including managing security credentials and even setting up new IAM Users.
+
+ 
+
+Instructions
+1. To start the lab experience, open the Amazon Console by clicking the Open Environment button in the upper-left corner of the lab:
+
+alt
+
+You will see 100% Setup completed status once the lab environment resources are created.
+
+ 
+
+2. Enter the following credentials created just for your lab session, and click Sign in:
+
+Account ID or alias: 819145381160
+IAM user name: student
+Password: Ca1_HpGrh78C
+alt
+
+
+3. Select the US West (Oregon) us-west-2 region using the upper-right drop-down menu on the AWS Management Console:
+
+alt
+
+Amazon Web Services is available in different regions all over the world, and the console lets you provision resources across multiple regions. You usually choose a region that best suits your business needs to optimize your customer’s experience, but you must use the US West 2 for this Lab.
+
+ 
+
+Recommendation: For an optimal lab experience, ensure that you are using a supported browser when accessing the AWS Management Console. For example, an up-to-date version of Google Chrome or Mozilla Firefox.
+
+Connecting to the Virtual Machine using EC2 Instance Connect
+Introduction
+In next lab step you will use a shell on a Linux host to install Docker.
+
+In this lab step, you will connect to an EC2 instance using EC2 Instance Connect and access a shell.
+
+ 
+
+Instructions
+1. In the AWS Management Console search bar, enter EC2, and click the EC2 result under Services:
+
+alt
+
+ 
+
+2. To see available instances, click Instances in the left-hand menu:
+
+alt
+
+The instances list page will open, and you will see an instance named cloudacademylabs:
+
+alt
+
+If you don't see a running instance then the lab environment is still loading. Wait until the Instance state is Running.
+
+ 
+
+3. Right-click the cloudacademylabs instance, and click Connect:
+
+alt
+
+The Connect to your instance form will load.
+
+ 
+
+4. In the form, ensure the EC2 Instance Connect tab is selected:
+
+alt
+
+You will see the instance's Instance ID and Public IP address displayed.
+
+ 
+
+5. In the User name textbox, enter ec2-user:
+
+alt
+
+ 
+
+6. To open a browser-based shell, click Connect:
+
+alt
+
+If you see an error it's likely that the environment hasn't finished setting up. Check for Setup completed at the top-left corner of the lab and try connecting again:
+
+alt
+
+A browser-based shell will open in a new window ready for you to use.
+
+Keep this window open, you will use it in later lab steps.
+
+You can also connect to the instance using your preferred SSH client and the PPK (Windows) or PEM (Mac/Linux) key files in the Credentials section of this lab.
