@@ -97,3 +97,41 @@ A browser-based shell will open in a new window ready for you to use.
 Keep this window open, you will use it in later lab steps.
 
 You can also connect to the instance using your preferred SSH client and the PPK (Windows) or PEM (Mac/Linux) key files in the Credentials section of this lab.
+
+Installing Docker on Amazon Linux
+
+Introduction
+You will install Docker using the yum package manager that is available on Amazon Linux. Docker comes in two flavors: Community Edition (CE) and Enterprise Edition (EE). The community edition is open source and available free of charge. It includes the core Docker functionality and was previously called "Docker Engine." The enterprise edition requires a subscription and includes a support package, a certification program to create trusted containers and extensions, and other features. You will be installing the community edition. You will also see how to add your user to the docker group to use the Docker commands without elevating to root permissions.
+
+ 
+
+Instructions
+ 1. Enter the following to install Docker:
+
+Copy code
+1
+sudo yum -y install docker
+ 
+
+2. Enter the command below to start Docker as a service:
+
+Copy code
+1
+sudo systemctl start docker
+ 
+
+3. Verify Docker is running by entering:
+
+Copy code
+1
+sudo docker info
+This will output system-wide information about Docker. The information will resemble the following:
+
+alt
+
+You can see some useful information, such as the number of containers, and the version of the Docker server. Docker adopts a client-server architecture, so the server doesn't have to be running on the same host as the client. In your case, you are using the Docker command line interface (CLI) client to connect to the server, called the Docker daemon.
+
+ 
+
+Summary 
+In this Lab Step, you added the official Docker CE repositories to the yum package manager and installed Docker CE. You also learned your first Docker command to print system-wide information relevant to Docker.
