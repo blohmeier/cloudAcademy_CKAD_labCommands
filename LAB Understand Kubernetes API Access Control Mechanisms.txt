@@ -54,3 +54,164 @@ alt
 It usually takes 2 minutes from the time you start the lab to see a worker node join the cluster. You can proceed to the next step before seeing the worker node, but one worker node should be available before you start working with the cluster.
 
 Note: You may see The connection to the server 10.0.0.100:6443 was refused - did you specify the right host or port? while the control plane's API server prepares to accept requests. It is not a problem and the control-plane node will appear before long.
+
+
+Introduction
+All requests sent to Kubernetes go through the Kubernetes API, which is hosted by the Kubernetes API Server. When you use kubectl to create a Deployment, kubectl sends a request to the API Server to create it. The Deployment object gets stored in the cluster's data store (etcd) once the request is accepted and the cluster controllers begin to create the Deployment's Pods. However, before the request is accepted, the API Server must allow it through its three layers of access control depicted below:
+
+alt
+
+Authentication: Requests sent to the API server are authenticated to prove the identity of the requester, be it a normal user or a service account, and are rejected otherwise.
+Authorization: The action specified in the request must be in the list of actions the authenticated user is allowed to perform or it is rejected.
+Admission Control: Authorized requests must then pass through all of the admission controllers configured in the cluster (excluding read-only requests) before any action is performed.
+In this lab step, you will explore authentication in the lab's Kubernetes cluster. How does kubectl know who is sending the request? How does the cluster recognize the sender? These are the questions that are answered in this lab step.
+
+ 
+
+Instructions
+1. Use kubectl to get the Pods in the default Namespace:
+
+Copy code
+1
+kubectl get pods
+alt
+
+No Pods are currently running. However, you will investigate how the request was authenticated which is the first layer in the API Server's access control.
+
+ 
+
+2. Re-issue the same command but with log level 6 verbosity (--v=6):
+
+Copy code
+1
+kubectl get pods --v=6
+alt
+
+The log Config loaded from file indicates the configuration file used by kubectl. This file is referred to as the kubeconfig file and is in the default location (.kube/config in the user's home directory). The following log summarizes the REST API request sent to the API Server. The kubeconfig file includes:
+
+Information about the cluster, such as the server address
+Information about users to authenticate as including certificates
+You will see this next.
+
+ 
+
+3. Display the contents of the kubeconfig file:
+
+Copy code
+1
+cat /home/ubuntu/.kube/config
+The file is in YAML format. Most of the contents are certificate and key data, but observe that there are several top-level keys including clusters, contexts, current-context, and users.
+
+The users list includes one user (kubernetes-admin) and provides a client certificate (client-certificate-data) and client key (client-key-data) to authenticate requests (certificate and key values omitted in the screenshot): 
+
+alt
+
+Client key and certificate is the default way to authenticate requests in Kubernetes clusters although other authentication modules are supported, including passwords and tokens. A request will pass authenticate if any of the authentication modules successfully authenticates the request.
+
+The following image highlights the contexts and current-context keys:
+
+alt
+
+A context is a triple of a cluster (kubernetes), a user (kubernetes-admin), and a Namespace (if not specified, the default Namespace is used). The context is also given a name for reference (kubernetes-admin@kubernetes). The current-context sets the context that will be used by kubectl by default. To manage the configuration of kubectl, you can use its config command.
+
+ 
+
+4. View the config commands provided by kubectl:
+
+Copy code
+1
+kubectl config --help
+alt
+
+These commands can be used to safely write to kubeconfig files using the delete, set, unset, and use commands. 
+
+ 
+
+5. Enter the following config command to get a summary of the contexts available in a kubeconfig file:
+
+Copy code
+1
+kubectl config get-contexts
+alt
+
+This view is useful for showing you all of the configured contexts and which is the CURRENT context. If there is no current context set, there will be no * in the first column. In this lab, there is only one context, but you could have several contexts in practice. There are also multiple contexts for different clusters in the Kuberenetes certification exams. If the current context is not what you want, you can use the use-context command to change it.
+
+ 
+
+6. Extract the user certificate from the kubeconfig file, and use OpenSSL to show the certificate details:
+
+Copy code
+1
+2
+3
+4
+5
+grep "client-cert" ~/.kube/config | \
+  sed 's/\(.*client-certificate-data: \)\(.*\)/\2/' | \
+  base64 --decode \
+  > cert.pem
+openssl x509 -in cert.pem -text -noout
+For this lab, the line to focus on is as follows:
+
+alt
+
+The Subject shows the kubernetes-admin common name (CN) and system:masters organization (O). Kubernetes maps the common name to users and the organization (if present) to groups. The cluster can verify the certificate is valid and therefore any request using the certificate is authenticated as the kuberentes-admin user.
+
+ 
+
+7. Back up the kubeconfig before removing the user and observing the impact on a request:
+
+Copy code
+1
+2
+3
+cp .kube/config .kube/config.orig
+sed -i '15,$d' .kube/config
+kubectl get pods --v=6
+alt
+
+Without a certificate username and password authentication is fallen back to.
+
+ 
+
+8. Enter any username and password at the prompts and observe the request is Forbidden:
+
+alt
+
+No users are configured for password authentication in the cluster so any combination of username and password will be forbidden. The same result would happen if a client certificate expired or was invalid for another reason.
+
+ 
+
+9. Press ctrl+c to end the credential prompts and replace the kubeconfig with it's original:
+
+Copy code
+1
+cp .kube/config.orig .kube/config
+You have focused on user authentication so far but ServiceAccounts go through the same authentication process. However, ServiceAccount use tokens for authentication which are stored in Secrets.
+
+ 
+
+10. View the default ServiceAccount's token Secret:  
+
+Copy code
+1
+kubectl get serviceaccounts default -o yaml
+At the bottom of the output the token, which is stored as a Secret is displayed:
+
+alt
+
+ 
+
+11. View the value of the Secret by entering the following:
+
+Copy code
+1
+kubectl get secrets -o yaml
+alt
+
+This is the token that the ServiceAccount uses to authenticate its requests.
+
+ 
+
+Summary
+In this lab step, you learned how authentication works in Kubernetes, and in particular when using kubectl for users and ServiceAccounts. User requests must pass the same authentication and other access control layers regardless of if they are sent from kubectl, using client libraries or REST API requests (in fact kubectl and client libraries are also sending REST API requests but abstracting the details away from you). You understood the role of kubeconfig files, contexts, and config commands to ensure that kubectl is properly configured to communicate with the target cluster. You also saw how ServiceAccounts use tokens for authentication.
