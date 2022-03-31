@@ -467,4 +467,177 @@ You will find all the supported tags along with helpful documentation for using 
 
 Summary 
 In this Lab Step, you explored the commands related to working with containers. You also ran a few containers. You learned the steps Docker takes to run a container and how to find Docker Hub images to create containers from.
+[ec2-user@ip-10-0-0-219 ~]$ history
+    1  docker info
+    2  history
+    3  docker command-name [options] 
+    4  docker management-group command-name [options]
+    5  docker --help
+    6  docker system info
+    7  docker system --help
+    8  docker image --help
+    9  docker container --help
+   10  history
+   11  docker run hello-world
+   12  docker run --name web-server -d -p 8080:80 nginx:1.12
+   13  curl localhost:8080
+   14  docker ps
+   15  docker ps -a
+   16  docker stop web-server
+   17  docker ps
+   18  curl localhost:8080
+   19  docker start web-server
+   20  docker logs web-server
+   21  docker exec -it web-server /bin/bash
+   22  docker exec web-server ls /etc/nginx
+   23  docker stop web-server
+   24  docker search "Microsoft .NET Core"
+   25  history
+[ec2-user@ip-10-0-0-219 ~]$ 
+
+Creating Your First Docker Image
+
+Introduction
+Docker containers run on top of images. You have seen how to use images on Docker's public registry, the Docker Hub. There are many different images available. It is worth trying to find existing images when you can. Inevitably, you will need to create your own images when making your own applications. In that case, you will still want to invest time into finding the right base layer to add your own layer(s) on top of.
+
+There are a couple of ways to make images. You can use docker commit to create an image from a container's changes. The changes may come from using exec to open a shell in the container like in the previous Lab Step. The other method is using a Dockerfile. A Dockerfile is easier to maintain, easier to repeatedly create images from, and distributions easier. You will create a Dockerfile in this Lab Step. Just know that it is possible to create equivalent images using commits.
+
+Dockerfiles specify a sequence of instructions. Instructions can install software, expose network ports, set the default command for running a container using the image, and other tasks. Instructions can really handle anything required to configure the application. Many of the instructions add layers. It is usually a good idea to keep the number of layers to a reasonable number. There is overhead with each layer, and the total number of layers in an image is limited. When the Dockerfile is ready, you can create the image using the docker build command.
+
+You will see how all of this comes together by creating an image of a Python Flask web app that randomly chooses what type of Cloud Academy content you should look at next. The choice of Python as the example app is arbitrary. You will not focus on the specifics of the programming language. You should be able to repeat the process for any other programming language by following a similar process. Whatever programming language or framework you are working with, you should consult the Docker Hub documentation for the image, as it will usually include advice on how to structure your Dockerfile.
+
+ 
+Instructions
+1. Install Git:
+
+Copy code
+1
+sudo yum -y install git
+You will clone a code repository with the Flask app using Git.
+
+ 
+
+2. Clone the code repository to your virtual machine:
+
+Copy code
+1
+git clone https://github.com/cloudacademy/flask-content-advisor.git
+ 
+
+3. Change to the apps directory:
+
+Copy code
+1
+cd flask-content-advisor
+ 
+
+4. Create and start editing a Dockerfile using the nano text editor:
+
+Copy code
+1
+nano Dockerfile
+Note: The name of the Dockerfile must be Dockerfile with an uppercase "D" and all other letters lowercase
+
+ 
+
+5. Enter the following in the file:
+
+Copy code
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+# Python v3 base layer
+FROM python:3
+# Set the working directory in the image's file system
+WORKDIR /usr/src/app
+# Copy everything in the host working directory to the container's directory
+COPY . .
+# Install code dependencies in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+# Indicate that the server will be listening on port 5000
+EXPOSE 5000
+# Set the default command to run the app
+CMD [ "python", "src/app.py" ]
+The lines beginning with # are comments and explain what each instruction is doing. Make sure you read the comments. Some highlights are:
+
+FROM sets the base layer image
+COPY . . copies all of the files in the code repository into the container's /usr/src/app directory
+RUN executes a command in a new layer at the top of the image
+EXPOSE only indicates what port the container will be listening on, it doesn't automatically open the port on the container
+CMD sets the default command to run when a container is made from the image
+There are more instruction types, but this lab will only focus on those mentioned. After completing the lab, you can review all of the instructions available in Dockerfiles at the Dockerfile reference web page.
+
+ 
+
+6. Once you have all of the instructions in the Dockerfile, press Ctrl+x, enter Y when prompted to save, and press enter.
+
+You are now back at the shell prompt.
+
+ 
+
+7. Build the image from the Dockerfile:
+
+Copy code
+1
+docker build -t flask-content-advisor:latest .
+The -t tells Docker to tag the image with the name flask-content-advisor and tag latest. The . at the end tells Docker to look for a Dockerfile in the current directory. Docker will report what it's doing to build the image. Each instruction has its own step. Steps one and four take longer than the others. Step one needs to pull several layers for the Python 3 base layer image and Step four downloads code dependencies for the Flask web application framework. Notice that each Step ends with a notice that an intermediate container was removed. Because layers are read-only, Docker needs to create a container for each instruction. When the instruction is complete, Docker commits it to a layer in the image and discards the container.
+
+ 
+
+8. Record your VM's public IP address:
+
+Copy code
+1
+curl ipecho.net/plain; echo
+You will need your IP to test that the web app is available with your browser.  The echo is only to put the shell prompt on a new line.
+
+ 
+
+9. Open a new browser tab and navigate to the public IP address you just recorded. The browser will fail to load anything since no server is running yet. Keep the tab open for later.
+
+alt
+
+Note: Your public IP will probably be different from the one in the image.
+
+ 
+
+10. Now you can run a container using the image you just built:
+
+Copy code
+1
+docker run --name advisor -p 80:5000 flask-content-advisor
+This runs a container named advisor and maps the container's port 5000 to the host's port 80 (http). This time you didn't include -d to run in detached mode.  That is why you see output and you don't have the shell prompt returned to you. If you did run with -d, you could get the same information from docker logs.
+
+ 
+
+11. Return to your browser tab with the public IP and refresh the page:
+
+alt
+
+Now the advisor will be in fine form recommending what content to tackle next after you complete this lab.
+
+ 
+
+12. Return to the shell and notice that some web requests will have been logged corresponding to your browser requests:
+
+alt
+
+There are two requests because the browser automatically requests a favicon in addition to the page content.
+
+  
+
+Summary 
+In this Lab Step, you created your own image using a Dockerfile. You also ran a container using the image that was built. 
+
+
+
 
