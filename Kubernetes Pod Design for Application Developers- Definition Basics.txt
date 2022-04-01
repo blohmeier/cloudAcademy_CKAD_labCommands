@@ -103,3 +103,23 @@ You could alternatively specify the -f option to delete the Pod using the file t
 
 Summary 
 In this lab step, you reviewed the basics of declaring Pods and used a few kubectl commands to work with Pods.
+
+ubuntu@ip-10-0-128-5:~$ history 
+    1  source <(kubectl completion bash)
+    2  cat << 'EOF' > first-pod.yaml
+apiVersion: v1            # The API path for the Pod resource
+kind: Pod                 # The kind of resource (Pod)
+metadata:
+  name: first-pod         # Name of the Pod
+spec:
+  containers:             # List of containers in the Pod
+  - image: httpd:2.4.38   # Container image (using a tag to specify version 2.4.38) 
+    name: first-container # Name of the container
+EOF
+
+    3  kubectl create -f first-pod.yaml
+    4  kubectl get pod
+    5  kubectl get pod first-pod -o yaml | more
+    6  kubectl delete pod first-pod
+    7  history 
+ubuntu@ip-10-0-128-5:~$
