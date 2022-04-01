@@ -216,3 +216,101 @@ alt
 
 Summary
 In this lab step, you understood the purpose of and learned how to use both readiness and liveness probes. Readiness probes allow you to detect when a Pod is not ready to serve traffic and Kubernetes should wait longer for the Pod to become ready. Liveness probes allow you to detect when a Pod has entered a broken state and is restarted automatically. Startup probes can be used to separate the probe behavior at startup from the probe behavior post-startup.
+
+
+Introduction
+There are many metrics that you may want to keep track of in Kubernetes: available node CPU/Memory, number of running Pods vs. desired Pods for Deployments, errors and warnings, etc. There are several built-in mechanisms available to make monitoring and debugging applications easier. You can also leverage purpose-built monitoring systems that run in Pods. Kubernetes has its own basic monitoring solution called Metrics Server. You will use Metrics Server later in this lab step. You can also use more complete metrics pipelines, such as Prometheus, but that is beyond the scope of this lab. 
+
+ 
+
+Instructions
+1. Use the get command to ensure all Pods have all containers running:
+
+Copy code
+1
+kubectl get pods --all-namespaces
+alt
+
+The READY column separates the number of containers that are ready and the number of containers in a Pod by a slash. You can quickly get a view of all the Pods in the cluster by adding the --all-namespaces option to get. Similarly, for any other Resource type, you can use get to quickly get a view of those Resources. For example, the output for Deployments lists the desired and actual number of Pods that are in each Deployment.
+
+To get more information you can use some commands you have used extensively in this Lab:
+
+describe which includes information about the resource itself as well as related resources and events
+logs for diagnosing any failures related to Pods and containers
+The get command can also be used to view complete configuration details by adding instructing the command to output in YAML format (-o yaml). This can help you diagnose any suspected configuration issues.
+
+ 
+
+2. List all the events in the default namespace:
+
+Copy code
+1
+kubectl get events -n default
+alt
+
+You can retrieve events for individual resources by using the describe command, but the get events command allows you to see all events in sequence. Events are namespaced so you can limit your search by Namespace. To get additional information, you can instruct get to output in wide format (-o wide).
+
+ 
+
+3. Enter the following command to see how to use the top command to monitor node and Pod resource utilization:
+
+Copy code
+1
+kubectl top
+alt
+
+The kubectl top command is in the same spirit as the top command for Unix-based operating systems. As the output states, the top command depends on a properly configured system for collecting the usage information. Metrics Server implements the Kubernetes metrics API. Other metric pipelines can also implement the metrics API to work with top and provide additional functionality, e.g. Prometheus, however, they are outside of the scope of this lab.
+
+ 
+
+4. Use top to view resource utilization metrics for the cluster's nodes:
+
+Copy code
+1
+kubectl top node
+alt
+
+The output displays CPU usage in cores and %. The master and nodes both have 2 CPU cores available. The CPU(cores) column would have a maximum value of 2000m (2000 milliCPU cores = 2 CPU cores). The CPU metrics indicate that the cluster is not under CPU pressure. The MEMORY columns indicate that there is greater than 50% memory available on the nodes. That indicates the cluster if oversized for the current workload. As new Pods are added you should monitor the memory pressure. You should also set CPU and memory limits and requests in your Pod containers to avoid an unexpected degradation in performance. Issue kubectl explain pod.spec.containers.resources for more information. 
+
+ 
+
+5. Use top to view resource utilization metrics for the Pods in the kube-system Namespace:
+
+Copy code
+1
+kubectl top pods -n kube-system
+alt
+
+From this view, you can see if there are any indications that a Pod is using an unexpected amount of resources.
+
+ 
+
+6. Display the resource utilization of individual containers:
+
+Copy code
+1
+kubectl top pod -n kube-system --containers
+alt
+
+The --containers option allows you to understand the resource utilization at a finer granularity when Pods contain multiple containers. In this example, all Pods are only running a single container, however. The NAME column refers to container names.
+
+ 
+
+7. Use a label selector to show only resource utilization for Pods with a k8s-app=kube-dns label:
+
+Copy code
+1
+kubectl top pod -n kube-system --containers -l k8s-app=kube-dns
+alt
+
+Label selectors make it easy to focus your search as long as you have a well-defined labeling strategy.
+
+ 
+
+Summary
+In this lab step, you used several kubectl commands that allow you to monitor your Kubernetes applications. You used Metrics Server to implement the metrics API that the top command depends on.
+
+If you have more time in your lab session, try issuing more logging, monitoring, and debugging types of commands. Try to inspect Pods, Deployments, and Services in the kube-system Namespace. For example:
+
+See if you can identify which container uses the most CPU or memory in the kube-system namespace.
+See if you can get the last 10 lines out of one of kube-proxy Pods' /etc/mtab file.
