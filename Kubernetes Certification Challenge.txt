@@ -14,4 +14,8 @@ Kubernetes Certification Practice Check 1: Created Specified Deployment
 Create a deployment named chk1 in the cal namespace. Use the image nginx:1.15.12-alpine and set the number of replicas to 3. Finally, ensure the revision history limit is set to 50.
 
 kubectl create deployment chk1 --image=nginx:1.15.12-alpine --namespace=cal
-kubectl scale --replicas=3 deployment.apps/chk1
+kubectl config set-context $(kubectl config current-context) --namespace=cal
+kubectl edit deployment chk1 --record
+Changes: (a: edit, o: add new line, esc: exit, :wq to save/quit/apply changes from edits)
+	replicas: 3
+	revisionHistoryLimit: 50
