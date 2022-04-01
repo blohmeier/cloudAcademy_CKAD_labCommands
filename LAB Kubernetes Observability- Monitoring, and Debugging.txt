@@ -1,0 +1,218 @@
+Introduction
+If a Pod is in a Running state it does not necessarily mean the Pod is ready to use or that the Pod is operating as you would expect. For example, a running Pod may not be ready to accept requests or may have entered into an internal failed state, such as a deadlock, preventing it to make progress on new requests. Kubernetes introduces probes for containers to detect when Pods are in such states. More specifically:
+
+Readiness probes are used to detect when a Pod is unable to serve traffic, such as during startup when large amounts of data are being loaded or caches are being warmed. When a readiness probe fails, it means that the Pod needs more time to become ready to serve traffic. When the Pod is accessed through a Kubernetes Service, the Service will not serve traffic to any Pods that have a failing readiness probe. 
+Liveness probes are used to detect when a Pod fails to make progress after entering a broken state, such as deadlock. The issues causing the Pod to enter such a broken state are bugs, but by detecting a Pod is in a broken state allows Kubernetes to restart the Pod and allow progress to be made, perhaps only temporarily until arriving at the broken state again. The application availability is improved compared to leaving the Pod in the broken state.
+Startup probes are used when an application starts slowly and may otherwise be killed due to failed liveness probes. The startup probe runs before both readiness and liveness probes. The startup probe can be configured with a startup time that is longer than the time needed to detect a broken state for a container after it has started.
+Readiness and Liveness probes run for the entire lifetime of the container they are declared in. Startup probes only run until they first succeed. A container can define up to one of each type of probe. All probes are also configured the same way. The only difference is how a probe failure is interpreted.
+
+You will use both Readiness and Liveness probes in this lab step.
+
+ 
+
+Instructions
+1. Load kubectl shell completions for your current shell session:
+
+Copy code
+1
+source <(kubectl completion bash)
+With completions loaded, you can press tab to autocomplete or list available completions as you enter kubectl commands.
+
+ 
+
+2. Explain the readinessProbe field which is at the path pod.spec.containers.readinessProbe:
+
+Copy code
+1
+kubectl explain pod.spec.containers.readinessProbe
+alt
+
+Read through the DESCRIPTION and FIELDS. There are three types of actions a probe can take to assess the readiness of a Pod's container:
+
+exec: Issue a command in the container. If the exit code is zero the container is a success, otherwise it is a failed probe.
+httpGet: Send and HTTP GET request to the container at a specified path and port. If the HTTP response status code is a 2xx or 3xx then the container is a success, otherwise, it is a failure.
+tcpSocket: Attempt to open a socket to the container on a specified port. If the connection cannot be established, the probe fails.
+The number of consecutive successes is configured via the successThreshold field and the number of consecutive failures required to transition from success to failure is failureThreshold. The probe runs every periodSeconds and each probe will wait up to timeoutSeconds to complete.
+
+ 
+
+3. Create a Pod that uses a readinessProbe with an HTTP GET action:
+
+Copy code
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+cat << 'EOF' > pod-readiness.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: readiness
+  name: readiness-http
+spec:
+  containers:
+  - name: readiness
+    image: httpd:2.4.38-alpine
+    ports:
+    - containerPort: 80
+    # Sleep for 30 seconds before starting the server
+    command: ["/bin/sh","-c"]
+    args: ["sleep 30 && httpd-foreground"]
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 3
+      periodSeconds: 3
+EOF
+kubectl create -f pod-readiness.yaml
+alt
+
+The probe will check for a successful HTTP response from the Pod's IP on port 80. The container command delays starting the server by sleeping for 30 seconds to simulate an intense startup routine. You can also set custom HTTP headers for the probe, issue kubectl explain pod.spec.containers.readinessProbe.httpGet for details.
+
+ 
+
+4. Describe the Pod to see how events related to the readiness probe:
+
+Copy code
+1
+kubectl describe pod readiness-http
+In the Events you should see some Warning entries related to the failed probe:
+
+alt
+
+There will be about 10 (x10) failed probes since the container sleeps for 30 seconds and the probe runs every 3 seconds after an initial 3-second delay. You can see when the probe succeeds by looking at the Conditions section:
+
+alt
+
+The Ready and ContainerReady Status will both be True once the probe succeeds. They will be False until then. Also, note the Containers section summarizes the configured readiness probe:
+
+alt
+
+ 
+
+5. To confirm the readiness probes are always running, kill the httpd server processes running in the container
+
+Copy code
+1
+kubectl exec readiness-http -- pkill httpd
+This command runs pkill httpd (kill all httpd processes) inside the readiness-http Pod's only container. The two dashes (--) are used to indicate where the command to run begins and options parsing for kubectl exec ends.
+
+ 
+
+6. Describe the Pod and observe the Ready Conditions are False:
+
+Copy code
+1
+kubectl describe pod readiness-http
+alt
+
+Note: The httpd server processes will recover from being killed after a minute. If more than a minute has passed since you issued the previous instruction's command, you may see both conditions are True.  If that happened, you can kill the httpd processes again and quickly describe the Pod.
+
+ 
+
+7. Create a Pod that uses a liveness probe to detect broken states:
+
+Copy code
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+cat << 'EOF' > pod-liveness.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-tcp
+spec:
+  containers:
+  - name: liveness
+    image: busybox:1.30.1
+    ports:
+    - containerPort: 8888
+    # Listen on port 8888 for 30 seconds, then sleep
+    command: ["/bin/sh", "-c"]
+    args: ["timeout 30 nc -p 8888 -lke echo hi && sleep 600"]
+    livenessProbe:
+      tcpSocket:
+        port: 8888
+      initialDelaySeconds: 3
+      periodSeconds: 5
+EOF
+kubectl create -f pod-liveness.yaml
+Recall that liveness probes have the same configuration as readiness probes. The nc (netcat) command listens (the -l option) for connections on port (-p) 8888 and responds with the message hi for the first 30 seconds, after which timeout kills the nc server. The liveness probe attempts to establish a connection with the server every 5 seconds.
+
+ 
+
+8. Watch the describe output for the Pod to observe when the liveness probe fails and the Pod is restarted:
+
+Copy code
+1
+watch kubectl describe pod liveness-tcp
+The Events will list BackOff and Unhealthy events when the liveness probe fails. Over time you should see the Restart Count increment about every minute:
+
+alt
+
+Recall that the probe needs to fail three times after having success to consider the probe as failed.
+
+ 
+
+9. Press ctrl+c to stop watching the output.
+
+ 
+
+10. Delete the Pods created in this lab step:
+
+Copy code
+1
+2
+kubectl delete -f pod-readiness.yaml
+kubectl delete -f pod-liveness.yaml
+alt
+alt
+
+ 
+
+Summary
+In this lab step, you understood the purpose of and learned how to use both readiness and liveness probes. Readiness probes allow you to detect when a Pod is not ready to serve traffic and Kubernetes should wait longer for the Pod to become ready. Liveness probes allow you to detect when a Pod has entered a broken state and is restarted automatically. Startup probes can be used to separate the probe behavior at startup from the probe behavior post-startup.
