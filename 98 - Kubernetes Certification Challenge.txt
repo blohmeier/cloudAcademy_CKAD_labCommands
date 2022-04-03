@@ -1,0 +1,109 @@
+Kubernetes Certification Practice Check 1: Created Specified Deployment
+Create a deployment named chk1 in the cal namespace. Use the image nginx:1.15.12-alpine and set the number of replicas to 3. Finally, ensure the revision history limit is set to 50.
+
+Kubernetes Certification Practice Check 2: Resolve Configuration Issues
+The site deployment in the pwn namespace is supposed to be exposed to clients outside of the Kubernetes cluster by the sitelb service. However, requests sent to the service do not reach the deployment's pods. Resolve the service configuration issue so the requests sent to the service do reach the deployment's pods.
+
+Kubernetes Certification Practice Check 3: Highest CPU Pod
+Write the name of the pod in zz8 namespace consuming the most CPU to /home/ubuntu/hcp001. The content of the file should be only the name of the Pod and nothing more.
+
+Kubernetes Certification Practice Check 4: Pod Secret
+In the sjq namespace, create a secret named xh8jqk7z that stores a generic secret with the key of tkn and the value of hy8szK2iu. Create a pod named server using the httpd:2.4.39-alpine image and give the pod's container access to the tkn key in the xh8jqk7z secret through an environment variable named SECRET_TKN.
+
+<--------------------------------------------------------------------------------------------------------->
+
+Kubernetes Certification Practice Check 1: Created Specified Deployment
+Create a deployment named chk1 in the cal namespace. Use the image nginx:1.15.12-alpine and set the number of replicas to 3. Finally, ensure the revision history limit is set to 50.
+
+kubectl create deployment chk1 --image=nginx:1.15.12-alpine --namespace=cal
+kubectl config set-context $(kubectl config current-context) --namespace=cal
+kubectl edit deployment chk1 --record
+Changes: (a: edit, o: add new line, esc: exit, :wq to save/quit/apply changes from edits)
+	replicas: 3
+	revisionHistoryLimit: 50
+
+<--------------------------------------------------------------------------------------------------------->
+
+Kubernetes Certification Practice Check 2: Resolve Configuration Issues
+The site deployment in the pwn namespace is supposed to be exposed to clients outside of the Kubernetes cluster by the sitelb service. However, requests sent to the service do not reach the deployment's pods. Resolve the service configuration issue so the requests sent to the service do reach the deployment's pods.
+
+kubectl edit -n pwn service sitelb
+	- then, change all "App" values from "sitelb" to "site".
+
+<--------------------------------------------------------------------------------------------------------->
+
+Kubernetes Certification Practice Check 3: Highest CPU Pod
+Write the name of the pod in zz8 namespace consuming the most CPU to /home/ubuntu/hcp001. The content of the file should be only the name of the Pod and nothing more.
+
+kubectl top pods -n zz8 | tail -n +2 | sort -n -k 2 -r | head -1 | cut -f 1 -d ' ' > /home/ubuntu/hcp001
+
+NOTE: got warning on above command:
+W0401 19:27:11.066546    2258 top_pod.go:140] Using json format to get metrics. Next release will switch to protocol-buffers, switch early by passing --use-protocol-buffers flag
+
+<--------------------------------------------------------------------------------------------------------->
+Kubernetes Certification Practice Check 4: Pod Secret
+In the sjq namespace, create a secret named xh8jqk7z that stores a generic secret with the key of tkn and the value of hy8szK2iu. Create a pod named server using the httpd:2.4.39-alpine image and give the pod's container access to the tkn key in the xh8jqk7z secret through an environment variable named SECRET_TKN.
+
+kubectl create secret generic -n sjq xh8jqk7z --from-literal=tkn=hy8szK2iu
+cat <<'EOF' | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: server
+  namespace: sjq
+spec:
+  containers:
+  - image: httpd:2.4.39-alpine
+    name: server
+    env:
+      - name: SECRET_TKN
+        valueFrom:
+          secretKeyRef:
+            name: xh8jqk7z
+            key: tkn
+EOF
+
+<--------------------------------------------------------------------------------------------------------->
+
+
+
+ALL ANSWERS
+# task 1
+kubectl create deployment --image=nginx:1.15.12-alpine --namespace=cal chk1
+kubectl scale -n cal deployment --replicas=3 chk1
+
+kubectl patch deployment -n cal chk1 --patch=$'spec:\n revisionHistoryLimit: 50'
+# JSON alternative
+kubectl patch deployment -n cal chk1 --patch='{"spec": {"revisionHistoryLimit": 50}}'
+# student can also manually update the field using
+kubectl edit -n cal deployment chk1
+
+# task 2
+kubectl patch -n pwn service sitelb --patch=$'spec:\n selector:\n  app: site'
+# JSON alternative:
+kubectl patch -n pwn service sitelb --patch '{"spec": {"selector": {"app": "site"}}}'
+# student can also manually update the field using
+kubectl edit -n pwn service sitelb
+
+# task 3
+kubectl top pods -n zz8 | tail -n +2 | sort -n -k 2 -r | head -1 | cut -f 1 -d ' ' > /home/ubuntu/hcp001
+
+# task 4
+kubectl create secret generic -n sjq xh8jqk7z --from-literal=tkn=hy8szK2iu
+cat <<'EOF' | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: server
+  namespace: sjq
+spec:
+  containers:
+  - image: httpd:2.4.39-alpine
+    name: server
+    env:
+      - name: SECRET_TKN
+        valueFrom:
+          secretKeyRef:
+            name: xh8jqk7z
+            key: tkn
+EOF
