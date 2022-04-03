@@ -16,7 +16,7 @@ A legacy application runs via a deployment in the zuc0co namespace. The deployme
 Kubernetes
 CKAD Check 4: Multi-Container Pattern
 Write the name of the multi-container pod design pattern used by the pod in the previous task to a file at /home/ubuntu/mcpod.
-
+<--------------------------------------------------------------------------------------------------------->
 QUESTIONS AND ANSWERS
 <--------------------------------------------------------------------------------------------------------->
 CKAD Check 1: Service Account
@@ -173,8 +173,8 @@ Write the name of the multi-container pod design pattern used by the pod in the 
 
 echo adapter > /home/ubuntu/mcpod
 <--------------------------------------------------------------------------------------------------------->
-
 ANSWERS ONLY
+<--------------------------------------------------------------------------------------------------------->
 
 # task 1
 kubectl create -n dwx7eq serviceaccount inspector
